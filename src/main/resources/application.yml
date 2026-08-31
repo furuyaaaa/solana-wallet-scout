@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/${POSTGRES_DB:wallet_scout}
-    username: ${POSTGRES_USER:wallet_scout}
-    password: ${POSTGRES_PASSWORD:change_me}
+    url: jdbc:h2:mem:wallet_scout;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+    username: sa
+    password:
   jpa:
     hibernate:
       ddl-auto: validate
@@ -15,4 +15,3 @@ helius:
 scout:
   early-window-minutes: 180
   max-transactions-per-token: 2000
-

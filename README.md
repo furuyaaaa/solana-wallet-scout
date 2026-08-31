@@ -44,8 +44,16 @@ Invoke-RestMethod -Method Post -Uri http://localhost:8080/api/scans/preview `
 `.env.example` を `.env` にコピーし、`HELIUS_API_KEY` を設定します。APIキーをGitへコミットしないでください。
 
 ```powershell
-docker compose up -d
 mvn spring-boot:run
+```
+
+通常起動ではインメモリH2を使うため、Dockerは不要です。保存データはアプリ終了時に消えます。
+
+PostgreSQLへ永続保存する場合だけ、Dockerを起動して `postgres` プロファイルを指定します。
+
+```powershell
+docker compose up -d
+mvn spring-boot:run -Dspring-boot.run.profiles=postgres
 ```
 
 ## 採点の注意
