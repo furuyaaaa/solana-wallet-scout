@@ -86,6 +86,7 @@ Invoke-RestMethod "http://localhost:8080/api/wallets/ウォレットアドレス
 | ウォレット | 発見元 | Activity Score | botリスク | 直近30日の概要 | 追跡開始日 |
 | --- | --- | ---: | ---: | --- | --- |
 | `H5DQ7AoUMcpuvZHhDUabHDRJ6CWtAxBQEBnnT2rRnDmw` | OnlyMarms初期購入候補 | 93.80 | 12.00 | 427取引、22活動日、73銘柄、保有時間中央値367.52分 | 2026-09-01 |
+| `EZYagrvcgDeoR1SKhyQqix9L2SGUPudpiZ3L3CJDpvTu` | OnlyMarms初期購入候補 | 78.11 | 13.33 | 566取引、22活動日、83銘柄、保有時間中央値223.62分 | 2026-09-01 |
 
 ### 追跡時の注意
 
