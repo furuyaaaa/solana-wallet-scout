@@ -25,6 +25,9 @@
 - System Program所有でないアドレスの除外
 - 総供給量10%以上の初期配布候補の除外
 - 同一秒の購入に開発者・LP・スナイパーのリスク表示
+- ウォレットの過去1〜90日アクティビティ分析
+- 取引回数・活動日数・銘柄数・保有時間・短時間売買率の算出
+- botリスクと暫定Activity Scoreの算出
 
 ## 初期購入者をプレビューする
 
@@ -58,6 +61,14 @@ PostgreSQLへ永続保存する場合だけ、Dockerを起動して `postgres` �
 docker compose up -d
 mvn spring-boot:run -Dspring-boot.run.profiles=postgres
 ```
+
+## ウォレットの30日分析
+
+```powershell
+Invoke-RestMethod "http://localhost:8080/api/wallets/ウォレットアドレス/analysis?days=30"
+```
+
+勝率と利益銘柄数は過去時点の価格データが必要です。現在は誤った利益判定を避けるため、`profitabilityStatus` を `NOT_CALCULATED_REQUIRES_HISTORICAL_PRICES` として返します。
 
 ## 採点の注意
 

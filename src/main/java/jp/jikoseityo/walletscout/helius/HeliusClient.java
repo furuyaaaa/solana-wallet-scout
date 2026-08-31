@@ -22,20 +22,30 @@ public class HeliusClient {
     }
 
     public JsonNode getTransactionsForAddress(String address, Instant from, Instant to, int limit) {
+        return getTransactionsForAddress(address, from, to, limit, false);
+    }
+
+    public JsonNode getWalletTransactions(String walletAddress, Instant from, Instant to, int limit) {
+        return getTransactionsForAddress(walletAddress, from, to, limit, true);
+    }
+
+    private JsonNode getTransactionsForAddress(
+            String address, Instant from, Instant to, int limit, boolean includeTokenAccounts) {
         if (!StringUtils.hasText(properties.apiKey())) {
             throw new IllegalStateException("HELIUS_API_KEY is not configured");
         }
 
+        Map<String, Object> filters = new LinkedHashMap<>();
+        filters.put("blockTime", Map.of("gte", from.getEpochSecond(), "lte", to.getEpochSecond()));
+        filters.put("status", "succeeded");
+        if (includeTokenAccounts) filters.put("tokenAccounts", "balanceChanged");
         Map<String, Object> config = Map.of(
                 "transactionDetails", "full",
                 "encoding", "jsonParsed",
                 "maxSupportedTransactionVersion", 0,
                 "sortOrder", "asc",
                 "limit", Math.min(limit, 1000),
-                "filters", Map.of(
-                        "blockTime", Map.of("gte", from.getEpochSecond(), "lte", to.getEpochSecond()),
-                        "status", "succeeded"
-                )
+                "filters", filters
         );
         Map<String, Object> request = Map.of(
                 "jsonrpc", "2.0",
