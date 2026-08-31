@@ -18,12 +18,26 @@
 - 説明可能なWallet Score計算
 - botリスクによる減点
 - 採点ユニットテスト
+- Helius `getTransactionsForAddress` クライアント
+- トークン残高の前後差分による初期購入者抽出
+- 初期購入者の重複排除と購入時刻順ランキング
+- `POST /api/scans/preview` プレビューAPI
 
-## 次に実装するAPI
+## 初期購入者をプレビューする
 
-- `POST /api/scans` — Mintアドレス、期間、初期購入時間幅を登録
-- `GET /api/scans/{id}` — 進捗と候補一覧
-- `GET /api/scans/{id}/candidates.csv` — 採点根拠付きCSV
+```powershell
+$body = @{
+  tokenMint = "対象Mintアドレス"
+  from = "2026-01-01T00:00:00Z"
+  to = "2026-01-01T03:00:00Z"
+  candidateLimit = 20
+} | ConvertTo-Json
+
+Invoke-RestMethod -Method Post -Uri http://localhost:8080/api/scans/preview `
+  -ContentType application/json -Body $body
+```
+
+現在のプレビューAPIは、Mintに関係する取引のうち対象トークン残高が初めて増加したownerを候補にします。流動性プール、開発者、取引所、単純送金の除外は次の段階で追加します。
 
 ## 起動準備
 
