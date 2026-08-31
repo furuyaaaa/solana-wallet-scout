@@ -16,10 +16,13 @@ import java.util.Map;
 public class ScanPreviewController {
     private final HeliusClient heliusClient;
     private final EarlyBuyerExtractor extractor;
+    private final BuyerRiskAnalyzer riskAnalyzer;
 
-    public ScanPreviewController(HeliusClient heliusClient, EarlyBuyerExtractor extractor) {
+    public ScanPreviewController(HeliusClient heliusClient, EarlyBuyerExtractor extractor,
+                                 BuyerRiskAnalyzer riskAnalyzer) {
         this.heliusClient = heliusClient;
         this.extractor = extractor;
+        this.riskAnalyzer = riskAnalyzer;
     }
 
     @PostMapping("/preview")
@@ -29,12 +32,21 @@ public class ScanPreviewController {
         }
         var transactions = heliusClient.getTransactionsForAddress(
                 request.tokenMint(), request.from(), request.to(), 1000);
-        var buyers = extractor.extract(transactions, request.tokenMint(), request.candidateLimit());
+        int rawLimit = Math.min(40, Math.max(request.candidateLimit() * 2, request.candidateLimit()));
+        var buyers = extractor.extract(transactions, request.tokenMint(), rawLimit);
+        var supply = heliusClient.getTokenSupply(request.tokenMint());
+        var owners = heliusClient.getAccountOwners(buyers.stream().map(EarlyBuyer::walletAddress).toList());
+        var assessed = riskAnalyzer.analyze(buyers, supply, owners);
+        var eligible = assessed.stream().filter(BuyerAssessment::eligible)
+                .limit(request.candidateLimit()).toList();
         return Map.of(
                 "tokenMint", request.tokenMint(),
                 "transactionCount", transactions.size(),
-                "candidateCount", buyers.size(),
-                "candidates", buyers
+                "tokenSupply", supply,
+                "rawCandidateCount", assessed.size(),
+                "candidateCount", eligible.size(),
+                "candidates", eligible,
+                "excluded", assessed.stream().filter(candidate -> !candidate.eligible()).toList()
         );
     }
 
@@ -43,4 +55,3 @@ public class ScanPreviewController {
         return ResponseEntity.badRequest().body(Map.of("error", exception.getMessage()));
     }
 }
-
