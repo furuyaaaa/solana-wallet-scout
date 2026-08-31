@@ -28,6 +28,7 @@
 - ウォレットの過去1〜90日アクティビティ分析
 - 取引回数・活動日数・銘柄数・保有時間・短時間売買率の算出
 - botリスクと暫定Activity Scoreの算出
+- 初期購入候補を順番に分析するバックグラウンドランキング
 
 ## 初期購入者をプレビューする
 
@@ -69,6 +70,10 @@ Invoke-RestMethod "http://localhost:8080/api/wallets/ウォレットアドレス
 ```
 
 勝率と利益銘柄数は過去時点の価格データが必要です。現在は誤った利益判定を避けるため、`profitabilityStatus` を `NOT_CALCULATED_REQUIRES_HISTORICAL_PRICES` として返します。
+
+## 初期購入ウォレットを一括ランキング
+
+`POST /api/rankings` にMint、ローンチ期間、候補数、履歴日数を送信します。レスポンスの `id` を使い、`GET /api/rankings/{id}` で進捗とランキングを確認します。処理はHeliusの無料枠に配慮して1ウォレットずつ実行します。アプリを終了するとジョブ履歴は消えます。
 
 ## 採点の注意
 
