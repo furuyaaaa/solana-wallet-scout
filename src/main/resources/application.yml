@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/${POSTGRES_DB:wallet_scout}
+    username: ${POSTGRES_USER:wallet_scout}
+    password: ${POSTGRES_PASSWORD:change_me}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+helius:
+  rpc-url: https://mainnet.helius-rpc.com
+  api-key: ${HELIUS_API_KEY:}
+scout:
+  early-window-minutes: 180
+  max-transactions-per-token: 2000
+
